@@ -17,18 +17,20 @@ from .constants import (
 )
 
 
-latest_timestamp = -1
+latest_timestamp = None
 stations = {}
 
 def process_events(events: Iterable[dict[str, Any]]) -> Generator[dict[str, Any], None, None]:
     for line in events:
         if line[TYPE] == SAMPLE:
-            latest_timestamp = line[TIMESTAMP]
+            update_timestamp(line[TIMESTAMP])
             process_sample(line)
-        if line[TYPE] == CONTROL:
+        elif line[TYPE] == CONTROL:
             yield process_control(line)
         else:
-            raise Exception #fill in later
+            raise ValueError("Did not recognize type input:" + line[TYPE] + 
+                             " in message received after time: " + 
+                             str(latest_timestamp) + ". Proceeding.")
         
 def process_sample(sample: dict[str, Any]):
     station = sample[STATION_NAME]
@@ -44,4 +46,25 @@ def process_sample(sample: dict[str, Any]):
 
 
 def process_control(message: dict[str, Any]) -> dict[str,Any]:
-    return {}
+    if message[COMMAND] == SNAPSHOT:
+        return __snapshot_builder()
+    if message[COMMAND] == RESET:
+        reset_stations()
+        return __reset_builder()
+    raise ValueError("Did not recognize command input:" + message[COMMAND] +
+                     " in command message received after time: " 
+                     + str(latest_timestamp) + ". Proceeding.")
+
+def reset_stations():
+    global stations
+    stations = {}
+
+def update_timestamp(timestamp):
+    global latest_timestamp
+    latest_timestamp = timestamp
+
+def __snapshot_builder():
+    return json.dumps({TYPE: SNAPSHOT, AS_OF: latest_timestamp, STATIONS: stations})
+
+def __reset_builder():
+    return json.dumps({TYPE: RESET, AS_OF: latest_timestamp})
