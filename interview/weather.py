@@ -68,3 +68,9 @@ def __snapshot_builder():
 
 def __reset_builder():
     return json.dumps({TYPE: RESET, AS_OF: latest_timestamp})
+
+def get_stations():
+    return stations
+
+def get_timestamp():
+    return latest_timestamp
