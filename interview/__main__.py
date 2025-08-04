@@ -1,10 +1,17 @@
 import json
 import sys
-from . import weather
+import weather
+from test_data import SAMPLE_DATA
 
 def generate_input():
     for line in sys.stdin:
         yield json.loads(line)
 
-for output in weather.process_events(generate_input()):
+#for output in weather.process_events(generate_input()):
+#    print(json.dumps(output))
+
+for output in weather.process_events(SAMPLE_DATA + [{"type":"control", "command":"snapshot"}]):
     print(json.dumps(output))
+
+print(weather.get_stations())
+

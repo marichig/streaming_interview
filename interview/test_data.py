@@ -1,6 +1,7 @@
-### Sample messages - used ChatGPT to generate
+#### SAMPLE_DATA_1: Build correct snapshot; correct resets / snapshot at very end
+### Sample message
 
-SAMPLE_DATA = [
+SAMPLE_DATA_1 = [
   {"type": "sample", "stationName": "Station A", "timestamp": 1692000000000, "temperature": 21.4},
   {"type": "sample", "stationName": "Station C", "timestamp": 1692000005000, "temperature": 16.9},
   {"type": "sample", "stationName": "Station B", "timestamp": 1692000010000, "temperature": 19.2},
@@ -18,10 +19,26 @@ SAMPLE_DATA = [
   {"type": "sample", "stationName": "Station C", "timestamp": 1692000070000, "temperature": 17.8}
 ]
 
-TARGET_SNAPSHOT = {"type": "snapshot", "asOf": 1692000070000, 
+TARGET_SNAPSHOT_1 = {"type": "snapshot", "asOf": 1692000070000, 
         "stations":{
-            "Station A": {"high": 21.4, "low": 22.0},
-            "Station B": {"high": 19.2, "low": 19.7},
-            "Station C": {"high": 16.0, "low": 17.8}
+            "Station A": {"low": 21.4, "high": 22.0},
+            "Station B": {"low": 19.2, "high": 19.7},
+            "Station C": {"low": 16.9, "high": 17.8}
         }
 }
+
+TARGET_RESET_1 = {"type":"reset", "asOf": 1692000070000}
+
+#### Test 2: Add one sample
+
+ONE_SAMPLE = {"type": "sample", 
+                           "stationName": "Station A", 
+                           "timestamp": 1692000000000, 
+                           "temperature": 21.4}
+
+ONE_SAMPLE_SNAPSHOT = {"type": "snapshot", "asOf": 1692000000000, 
+        "stations":{
+            "Station A": {"low": 21.4, "high": 21.4}
+        }}
+
+#### Test 3: No sample
