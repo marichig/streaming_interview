@@ -39,6 +39,9 @@ ONE_SAMPLE = {"type": "sample",
 ONE_SAMPLE_SNAPSHOT = {"type": "snapshot", "asOf": 1692000000000, 
         "stations":{
             "Station A": {"low": 21.4, "high": 21.4}
-        }}
+        }
+      }
 
-#### Test 3: No sample
+BAD_MESSAGE_TYPE = {"type": "jeronimo"}
+
+BAD_CONTROL = {"type":"control", "command": "do that thang"}

@@ -1,11 +1,16 @@
 from . import weather
 from .test_data import (
-   SAMPLE_DATA_1, TARGET_SNAPSHOT_1, TARGET_RESET_1, ONE_SAMPLE_SNAPSHOT, ONE_SAMPLE
+   SAMPLE_DATA_1, TARGET_SNAPSHOT_1, TARGET_RESET_1, ONE_SAMPLE_SNAPSHOT, ONE_SAMPLE,
+   BAD_MESSAGE_TYPE, BAD_CONTROL
 )
 from .constants import CONTROL_SNAPSHOT, CONTROL_RESET
 
-#def test_replace_me():
-#   assert [{}] == list(weather.process_events([{}]))
+def test_empty_message():
+   try:
+      list(weather.process_events([{}]))
+      assert False, "Expected an error in this text"
+   except Exception as e:
+      assert "Received message with no type field" in str(e), f"Value Error Message: {e}"
 
 def test_add_one_sample():
    assert [ONE_SAMPLE_SNAPSHOT] == list(weather.process_events([ONE_SAMPLE, CONTROL_SNAPSHOT]))
@@ -26,3 +31,17 @@ def test_reset_then_snapshot_with_no_data():
            {"type":"snapshot", "asOf": None, "stations":{}}] == list(
               weather.process_events([CONTROL_RESET, CONTROL_SNAPSHOT])
            )
+   
+def test_bad_message_type():
+   try:
+      list(weather.process_events([BAD_MESSAGE_TYPE]))
+      assert False, "Expected an error in this text"
+   except Exception as e:
+      assert BAD_MESSAGE_TYPE["type"] in str(e), f"Value Error Message: {e}"
+
+def test_bad_control_type():
+   try:
+      list(weather.process_events([BAD_CONTROL]))
+      assert False, "Expected an error in this text"
+   except Exception as e:
+      assert BAD_CONTROL["command"] in str(e), f"Value Error Message: {e}"

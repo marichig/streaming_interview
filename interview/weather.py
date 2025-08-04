@@ -27,15 +27,18 @@ def process_events(events: Iterable[dict[str, Any]]) -> Generator[dict[str, Any]
     reset_stations()
 
     for line in events:
-        if line[TYPE] == SAMPLE:
-            update_timestamp(line[TIMESTAMP])
-            process_sample(line)
-        elif line[TYPE] == CONTROL:
-            yield process_control(line)
-        else:
-            raise ValueError("Did not recognize type input:" + line[TYPE] + 
-                             " in message received after time: " + 
-                             str(latest_timestamp) + ". Proceeding.")
+        try:
+            if line[TYPE] == SAMPLE:
+                update_timestamp(line[TIMESTAMP])
+                process_sample(line)
+            elif line[TYPE] == CONTROL:
+                yield process_control(line)
+            else:
+                raise ValueError("Did not recognize type input:" + line[TYPE] + 
+                                " in message received after time: " + 
+                                str(latest_timestamp) + ". Terminating.")
+        except KeyError as e:
+            raise ValueError("Received message with no type field. Full message was " + str(line) + ". Terminating.")
         
 def process_sample(sample: dict[str, Any]):
     station = sample[STATION_NAME]
@@ -57,7 +60,7 @@ def process_control(message: dict[str, Any]) -> dict[str,Any]:
         return __reset_builder()
     raise ValueError("Did not recognize command input:" + message[COMMAND] +
                      " in command message received after time: " 
-                     + str(latest_timestamp) + ". Proceeding.")
+                     + str(latest_timestamp) + ". Terminating.")
 
 def reset_stations():
     global stations

@@ -7,11 +7,6 @@ def generate_input():
     for line in sys.stdin:
         yield json.loads(line)
 
-#for output in weather.process_events(generate_input()):
-#    print(json.dumps(output))
-
-for output in weather.process_events(SAMPLE_DATA + [{"type":"control", "command":"snapshot"}]):
+for output in weather.process_events(generate_input()):
     print(json.dumps(output))
-
-print(weather.get_stations())
 
